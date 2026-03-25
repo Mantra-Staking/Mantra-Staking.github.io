@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mantra Staking — rewards, risks and setup basics</title>
+  <meta name="description" content="Mantra Staking lets OM holders earn rewards through validator delegation. Learn setup, APR, lockups, risks, and best practices now.">
+  <link rel="canonical" href="https://mantra-staking.github.io/">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta property="og:title" content="Mantra Staking — rewards, risks and setup basics">
+  <meta property="og:description" content="Mantra Staking lets OM holders earn rewards through validator delegation. Learn setup, APR, lockups, risks, and best practices now.">
+  <meta property="og:url" content="https://mantra-staking.github.io/">
+  <meta property="og:type" content="article">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "name": "Mantra Staking — rewards, risks and setup basics", "description": "Mantra Staking lets OM holders earn rewards through validator delegation. Learn setup, APR, lockups, risks, and best practices now.", "url": "https://mantra-staking.github.io/", "inLanguage": "en"}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://"}, {"@type": "ListItem", "position": 2, "name": "Mantra Staking — rewards, risks and setup basics"}]}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does Mantra Staking work?", "acceptedAnswer": {"@type": "Answer", "text": "Mantra Staking works by delegating OM tokens to a validator that helps secure the network and produce blocks. In return, delegators earn a share of staking rewards after validator commission, while accepting risks such as lockup periods, validator underperformance, and possible slashing depending on network rules."}}, {"@type": "Question", "name": "Do you lose custody of OM when you stake it?", "acceptedAnswer": {"@type": "Answer", "text": "Not in the usual delegated staking model. You generally retain ownership of the OM token while assigning staking power to a validator, but the tokens can become locked for network purposes until you complete the unstaking process."}}, {"@type": "Question", "name": "What should I check before choosing a validator?", "acceptedAnswer": {"@type": "Answer", "text": "Start with validator uptime, commission, stake concentration, and operating history. A network explorer such as <a href=\"https://www.mintscan.io/\">Mintscan validator data</a> can help you compare active validators and avoid choosing solely by advertised yield."}}, {"@type": "Question", "name": "Can Mantra staking rewards change over time?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Staking rewards can shift with network conditions, validator commission, and your own compounding behavior. That is why annual percentage rate should be treated as a moving estimate rather than a fixed return promise."}}, {"@type": "Question", "name": "What is the main downside of staking on Mantra?", "acceptedAnswer": {"@type": "Answer", "text": "The biggest downside is reduced liquidity. If OM is locked during staking or waiting through an unbonding period, you may not be able to react quickly to market changes or move funds into another strategy."}}, {"@type": "Question", "name": "Where can I learn the proof-of-stake model behind OM staking?", "acceptedAnswer": {"@type": "Answer", "text": "A strong starting point is the <a href=\"https://docs.cosmos.network/\">Cosmos proof-of-stake and delegation documentation</a>, which explains how validators, delegators, and reward mechanics typically work on networks built around similar staking concepts."}}]}]}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ═══ BASE THEME — Component Framework ═══ */
+/* All components use these CSS variables. */
+/* Theme presets override specific values.  */
+/* Assembler injects --primary from AI.     */
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── CTA fallback ── */
+  --cta-bg: linear-gradient(135deg, #6366f1, #4f46e5);
+  --cta-text: #fff;
+  --cta-glow: rgba(99,102,241,0.25);
+
+  /* ── Shadows (fallback — presets may override) ── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+
+  /* ── Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* ── Typography (sizing only — fonts set by preset + assembler) ── */
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-size: 17px;
+  --line-height: 1.7;
+
+  /* ── Layout ── */
+  --content-width: 760px;
+  --page-width: 1100px;
+  --section-gap: 56px;
+  --container-padding: 24px;
+}
+
+/* ── Base Typography ── */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  line-height: 1.25;
+  color: var(--text);
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; margin-bottom: 16px; }
+h3 { font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 600; margin-bottom: 10px; }
+h4 { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+
+p { margin-bottom: 1em; color: var(--text-2); }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--primary-hover); }
+
+strong { color: var(--text); font-weight: 600; }
+
+ul, ol { padding-left: 1.5em; margin-bottom: 1em; color: var(--text-2); }
+li { margin-bottom: 0.4em; }
+li::marker { color: var(--primary); }
+
+/* ── Layout Containers ── */
+.page-wrapper {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* Full-width wrapper for hero, CTA sections */
+.full-width {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+main {
+  padding: var(--section-gap) 0;
+}
+
+main > section,
+main > .component {
+  margin-bottom: var(--section-gap);
+}
+
+/* ── Card Base ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--primary-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2), 0 0 0 1px var(--primary-glow);
+}
+.card h4 { margin-bottom: 8px; }
+.card .highlight {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 12px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Card Grid ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* ── CTA Button ── */
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 32px;
+  background: var(--cta-bg);
+  color: var(--cta-text);
+  font-weight: 600;
+  font-size: 1.05rem;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 4px 20px var(--cta-glow);
+  letter-spacing: 0.02em;
+}
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px var(--cta-glow), 0 0 0 2px var(--primary-glow);
+  color: var(--cta-text);
+}
+
+/* ── Table Base ── */
+.table-wrap {
+  overflow-x: auto;
+  margin: 20px 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.table-wrap th {
+  background: var(--bg-subtle);
+  color: var(--text);
+  font-weight: 600;
+  text-align: left;
+  padding: 14px 18px;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.table-wrap td {
+  padding: 14px 18px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+}
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap tr:hover td { background: var(--bg-card-hover); }
+.table-wrap tr:nth-child(even) td { background: var(--bg-subtle); }
+.table-wrap tr:first-child td { color: var(--primary); font-weight: 500; }
+
+/* ── FAQ Accordion ── */
+details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+details:hover { border-color: var(--border-hover); }
+details[open] { border-color: var(--primary-glow); }
+details summary {
+  padding: 18px 22px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg-card);
+  transition: background 0.2s, color 0.2s;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::after {
+  content: '+';
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  transition: transform 0.3s, color 0.2s;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+details[open] summary::after { content: '\2212'; color: var(--primary); }
+details[open] summary { border-bottom: 1px solid var(--border); color: var(--primary); }
+details > div, details > p {
+  padding: 18px 22px;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  :root {
+    --font-size: 16px;
+    --section-gap: 36px;
+    --container-padding: 16px;
+  }
+  .card-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  :root { --container-padding: 12px; }
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.35rem; }
+}
+
+/* ── Utility ── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ── Scroll Progress Bar ── */
+.progress-bar {
+  position: fixed; top: 0; left: 0;
+  height: 3px; background: var(--primary);
+  z-index: 9999; transition: width 0.1s;
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+/* ── Back to Top ── */
+.back-top {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 40px; height: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, background 0.2s;
+  z-index: 100;
+}
+.back-top.visible { opacity: 1; visibility: visible; }
+.back-top:hover { background: var(--bg-card-hover); color: var(--primary); }
+
+/* ── Scroll Animations ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Keyframes ── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
+  50% { box-shadow: 0 0 0 8px transparent; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Decorative ── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 0;
+  border: none;
+}
+
+/* ── Visual Separator (between major sections) ── */
+.visual-sep {
+  text-align: center;
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  letter-spacing: 1em;
+  opacity: 0.4;
+}
+.visual-sep::before { content: '\2022 \2022 \2022'; }
+
+/* ── Icon Circle ── */
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.icon-circle--sm { width: 32px; height: 32px; font-size: 0.85rem; }
+.icon-circle--lg { width: 48px; height: 48px; font-size: 1.15rem; }
+
+/* ── Stat Row ── */
+.stat-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.stat-item {
+  text-align: center;
+}
+.stat-value {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.2;
+}
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── Noise texture overlay ── */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════════════════════════════════ */
+/* ═══ DESIGN STYLE VARIANTS                      ═══ */
+/* ═══════════════════════════════════════════════════ */
+
+/* ── Card Styles ── */
+.card--bordered {
+  border: 1px solid var(--border);
+  background: transparent;
+  box-shadow: none;
+}
+.card--shadow {
+  border: none;
+  box-shadow: var(--shadow-md);
+  background: var(--bg-card);
+}
+.card--glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: none;
+}
+.card--flat {
+  background: var(--bg-card);
+  border: none;
+  box-shadow: none;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Background Textures ── */
+.page--noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-blend-mode: overlay;
+}
+.page--gradient-mesh::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(var(--primary-rgb, 99,102,241), 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(var(--primary-rgb, 99,102,241), 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(var(--primary-rgb, 99,102,241), 0.03) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ── Section Dividers ── */
+.page--divider-line .content-section + .content-section {
+  border-top: 1px solid var(--border);
+  padding-top: var(--section-gap, 3rem);
+}
+.page--divider-gradient .content-section + .content-section::before {
+  content: '';
+  display: block;
+  height: 1px;
+  margin-bottom: var(--section-gap, 3rem);
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.page--divider-none .content-section + .content-section {
+  border-top: none;
+}
+
+/* ── Spacing Variants ── */
+.page--spacing-tight {
+  --section-gap: 2rem;
+  --content-gap: 1rem;
+}
+.page--spacing-tight .content-section { margin-bottom: 2rem; }
+.page--spacing-tight .content-section + .content-section { margin-top: 0; }
+
+.page--spacing-normal {
+  --section-gap: 3rem;
+  --content-gap: 1.5rem;
+}
+
+.page--spacing-airy {
+  --section-gap: 4.5rem;
+  --content-gap: 2rem;
+}
+.page--spacing-airy .content-section { margin-bottom: 4.5rem; }
+
+/* ── Animation Variants ── */
+.page--animate-none .fade-in {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+.page--animate-subtle .fade-in {
+  transition-duration: 0.4s;
+}
+.page--animate-dynamic .fade-in {
+  transition-duration: 0.6s;
+  transform: translateY(30px);
+}
+
+/* ── TOC Variants ── */
+.toc--sidebar {
+  position: sticky;
+  top: 80px;
+  float: right;
+  width: 220px;
+  margin-left: 2rem;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  font-size: 0.8rem;
+  scrollbar-width: thin;
+}
+@media (max-width: 1024px) {
+  .toc--sidebar {
+    float: none;
+    position: static;
+    width: 100%;
+    margin-left: 0;
+    max-height: none;
+  }
+}
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 36px 0;
+  margin-top: var(--section-gap);
+}
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+.footer-copy { margin: 0; }
+.footer-links {
+  display: flex;
+  gap: 18px;
+}
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-size: 0.8rem;
+}
+.footer-links a:hover { color: var(--text-2); }
+.footer-updated {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+  opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .footer-inner { flex-direction: column; text-align: center; }
+}
+/* ── Navigation ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+.nav-brand {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.nav-links a {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-links a:hover {
+  color: var(--text);
+  background: var(--bg-card);
+}
+.nav-links a.cta-pill {
+  background: var(--primary);
+  color: #fff;
+  margin-left: 8px;
+}
+.nav-links a.cta-pill:hover {
+  background: var(--primary-hover);
+}
+
+/* ── More dropdown ── */
+.nav-more {
+  position: relative;
+}
+.nav-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-more-btn:hover {
+  color: var(--text);
+  background: var(--bg-card);
+}
+.nav-more-arrow {
+  font-size: 0.65rem;
+  transition: transform 0.2s;
+}
+.nav-more.open .nav-more-arrow {
+  transform: rotate(180deg);
+}
+.nav-more-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: var(--bg-2, var(--bg));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 8px);
+  padding: 6px;
+  box-shadow: var(--shadow-md);
+  flex-direction: column;
+  z-index: 200;
+}
+.nav-more.open .nav-more-dropdown {
+  display: flex;
+}
+.nav-more-dropdown a {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+}
+.nav-more-dropdown a:hover {
+  color: var(--text);
+  background: var(--bg-card);
+}
+
+/* ── Mobile nav ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+.nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-2);
+  transition: transform 0.2s;
+}
+
+@media (max-width: 768px) {
+  .nav-toggle { display: flex; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+  }
+  .nav-links.open { display: flex; }
+  .nav-more-btn { display: none; }
+  .nav-more-dropdown {
+    display: flex;
+    position: static;
+    background: none;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    min-width: auto;
+  }
+}
+
+/* ── Nav behavior modifiers ── */
+.nav--auto-hide {
+  transition: transform 0.3s ease;
+}
+.nav--auto-hide.nav--hidden {
+  transform: translateY(-100%);
+}
+.nav--transparent {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: transparent;
+  transition: background 0.3s, border-color 0.3s;
+}
+.nav--transparent.nav--scrolled {
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom-color: var(--border);
+}
+
+/* ── Price Ticker ── */
+.ticker-bar {
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+  font-size: 0.75rem;
+  font-family: var(--font-body);
+}
+.ticker-inner {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ticker-inner::-webkit-scrollbar { display: none; }
+.ticker-items {
+  display: flex;
+  gap: 28px;
+  white-space: nowrap;
+  align-items: center;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-2);
+}
+.ticker-item b {
+  color: var(--text);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.ticker-up { color: #10b981; font-weight: 500; }
+.ticker-down { color: #ef4444; font-weight: 500; }
+.ticker-loading {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── Content Sections ── */
+.content-section {
+  scroll-margin-top: 72px;
+}
+.content-section h2 {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  position: relative;
+}
+.content-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 1px;
+}
+.content-section h3 {
+  margin-top: 32px;
+  padding-top: 8px;
+}
+
+/* ── Capsule (featured snippet bait) ── */
+.capsule {
+  background: var(--primary-light);
+  border-left: 3px solid var(--primary);
+  padding: 16px 20px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 24px;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* ── Evidence block ── */
+.evidence {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 18px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+.evidence::before {
+  content: '\25C6';
+  color: var(--primary);
+  font-size: 0.7rem;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* ── Subsection ── */
+.subsection {
+  margin-top: 28px;
+}
+.subsection h3 {
+  margin-top: 0;
+}
+
+/* ── Cards variant ── */
+.section--cards .card-grid {
+  margin-top: 24px;
+}
+.section--cards .card h4 {
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.section--cards .card p {
+  font-size: 0.9rem;
+  margin: 0;
+  color: var(--text-2);
+}
+
+/* ── Steps variant ── */
+.steps {
+  counter-reset: step;
+  margin-top: 24px;
+  position: relative;
+  padding-left: 28px;
+}
+/* Connecting line */
+.steps::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--primary), var(--border));
+  border-radius: 1px;
+}
+.step {
+  counter-increment: step;
+  display: flex;
+  gap: 16px;
+  padding: 22px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.step:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+.step::before {
+  content: counter(step);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px var(--bg), 0 0 0 5px var(--border);
+}
+.step-content h4 { margin-bottom: 8px; }
+.step-content p { font-size: 0.9rem; margin: 0; color: var(--text-2); }
+/* ── CTA Section (bottom) ── */
+.cta-section {
+  text-align: center;
+  padding: 64px 40px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--primary-light) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  margin-top: var(--section-gap);
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner {
+  position: relative;
+  z-index: 1;
+}
+.cta-inner h2 {
+  border-bottom: none;
+  margin-bottom: 14px;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+}
+.cta-inner h2::after { display: none; }
+.cta-inner p {
+  max-width: 520px;
+  margin: 0 auto 28px;
+  color: var(--text-2);
+  font-size: 1.05rem;
+}
+
+/* ── Inline CTA (between sections) ── */
+.cta-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px;
+  background: var(--primary-light);
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  border-radius: var(--radius-md);
+  margin: 36px 0;
+  transition: border-color 0.2s;
+}
+.cta-inline:hover {
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+}
+.cta-inline p {
+  margin: 0;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 1rem;
+}
+.cta-inline .cta-button {
+  white-space: nowrap;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+}
+
+/* ── Sticky CTA Bar ── */
+.cta-sticky {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  padding: 14px 24px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.cta-sticky.visible {
+  transform: translateY(0);
+}
+.cta-sticky p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+@media (max-width: 600px) {
+  .cta-section { padding: 40px 24px; }
+  .cta-inline {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+/* ── Pros & Cons ── */
+.pros-cons-section { scroll-margin-top: 72px; }
+.pros-cons-section h2::after { display: none; }
+
+.pros-cons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+.pros-col, .cons-col {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.pros-col::before, .cons-col::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.pros-col::before { background: linear-gradient(90deg, #10b981, #34d399); }
+.cons-col::before { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+
+.pros-heading, .cons-heading {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pros-heading { color: #10b981; }
+.cons-heading { color: #f43f5e; }
+.pros-heading::before { content: '\2713'; }
+.cons-heading::before { content: '\2717'; }
+
+.pros-list, .cons-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.pros-list li, .cons-list li {
+  padding: 8px 0 8px 24px;
+  position: relative;
+  color: var(--text-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--border);
+}
+.pros-list li:last-child, .cons-list li:last-child { border-bottom: none; }
+.pros-list li::before {
+  content: '+';
+  position: absolute;
+  left: 0;
+  color: #10b981;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.cons-list li::before {
+  content: '\2013';
+  position: absolute;
+  left: 2px;
+  color: #f43f5e;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .pros-cons-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Comparison Cards variant ── */
+.comparison-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.comp-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+.comp-card:first-child {
+  border-color: var(--primary-glow);
+  box-shadow: 0 0 0 1px var(--primary-glow);
+}
+.comp-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.comp-card h4 {
+  margin-bottom: 10px;
+}
+.comp-card .comp-rating {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+}
+.comp-card .comp-details {
+  font-size: 0.85rem;
+  color: var(--text-2);
+  text-align: left;
+}
+.comp-card .comp-details dt {
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 10px;
+}
+/* ═══ HERO — Premium ═══ */
+.hero {
+  text-align: center;
+  padding: 100px var(--container-padding) 72px;
+  position: relative;
+  overflow: hidden;
+  max-width: var(--page-width);
+  margin: 0 auto;
+}
+
+/* Radial glow */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, var(--primary-glow) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* Bottom separator */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  z-index: 1;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Badge */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 28px;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(8px);
+}
+.hero-badge .dot {
+  width: 7px;
+  height: 7px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--primary-glow);
+  animation: pulse-glow 2.5s ease infinite;
+}
+
+.hero h1 {
+  margin-bottom: 20px;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-2);
+  max-width: 580px;
+  margin: 0 auto 36px;
+  line-height: 1.65;
+}
+
+.hero-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ═══ GRADIENT ═══ */
+.hero--gradient {
+  padding: 120px var(--container-padding) 88px;
+  background: linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 40%, var(--bg) 100%);
+}
+.hero--gradient::before {
+  width: 1100px;
+  height: 600px;
+  opacity: 0.45;
+}
+.hero--gradient h1 {
+  background: linear-gradient(135deg, var(--text) 30%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══ SPLIT ═══ */
+.hero--split {
+  text-align: left;
+  padding: 80px var(--container-padding) 64px;
+}
+.hero--split .hero-inner {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  align-items: center;
+  max-width: var(--page-width);
+}
+.hero--split .hero-subtitle {
+  margin: 0 0 32px;
+  max-width: none;
+}
+.hero--split .hero-cta { justify-content: flex-start; }
+.hero-visual {
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--primary-light) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, var(--primary-glow) 100%);
+}
+
+/* ═══ MINIMAL ═══ */
+.hero--minimal {
+  padding: 56px var(--container-padding) 40px;
+}
+.hero--minimal::before { display: none; }
+.hero--minimal::after { opacity: 0.5; }
+.hero--minimal .hero-subtitle { margin-bottom: 0; }
+.hero--minimal .hero-inner { max-width: 640px; }
+
+/* ═══ Responsive ═══ */
+@media (max-width: 768px) {
+  .hero { padding: 72px var(--container-padding) 48px; }
+  .hero-subtitle { font-size: 1.05rem; }
+  .hero--gradient { padding: 88px var(--container-padding) 56px; }
+  .hero--split .hero-inner { grid-template-columns: 1fr; text-align: center; }
+  .hero--split .hero-cta { justify-content: center; }
+  .hero-visual { display: none; }
+}
+/* ── FAQ Section ── */
+.faq-section { scroll-margin-top: 72px; }
+.faq-section h2 {
+  margin-bottom: 24px;
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ── FAQ Grid variant ── */
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.faq-grid .faq-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  transition: border-color 0.2s;
+}
+.faq-grid .faq-card:hover {
+  border-color: var(--border-hover);
+}
+.faq-grid .faq-card h4 {
+  color: var(--text);
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+.faq-grid .faq-card p {
+  color: var(--text-2);
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Table of Contents ── */
+.toc {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 28px;
+  margin-bottom: var(--section-gap);
+}
+.toc-title {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.toc-list {
+  padding-left: 0;
+  margin: 0;
+  counter-reset: toc;
+  list-style: none;
+}
+.toc-list li {
+  counter-increment: toc;
+  margin-bottom: 4px;
+}
+.toc-list li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s, background 0.2s;
+}
+.toc-list li a:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+.toc-list li a::before {
+  content: counter(toc, decimal-leading-zero);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 24px;
+}
+
+@media (max-width: 600px) {
+  .faq-grid { grid-template-columns: 1fr; }
+}
+/* ── Key Takeaway / Blockquote ── */
+.key-takeaway {
+  padding: 24px 28px;
+  background: var(--bg-card);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: 28px 0;
+  position: relative;
+}
+.key-takeaway::before {
+  content: '\201C';
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 3rem;
+  color: var(--primary-glow);
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+.key-takeaway p {
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.65;
+  padding-left: 8px;
+}
+
+/* ── Definition Box ── */
+.definition-box {
+  padding: 22px 26px;
+  background: var(--primary-light);
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  border-radius: var(--radius-md);
+  margin-bottom: 28px;
+}
+.definition-box p {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.7;
+}
+.definition-box strong {
+  color: var(--primary);
+}
+/* ── Trust Section ── */
+.trust-section { scroll-margin-top: 72px; }
+.trust-points {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+.trust-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 0.9rem;
+  color: var(--text-2);
+  line-height: 1.6;
+  transition: border-color 0.2s;
+}
+.trust-point:hover {
+  border-left-color: var(--primary-hover);
+}
+.trust-point::before {
+  content: '\2713';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.75rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Disclaimer ── */
+.disclaimer-block {
+  padding: 18px 22px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-top: 28px;
+}
+.disclaimer-block p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.65;
+}
+.disclaimer-block strong {
+  color: var(--text-2);
+}
+
+:root {
+  --primary: #17C98B;
+  --primary-hover: #13aa76;
+  --primary-dim: #108c61;
+  --primary-glow: rgba(23,201,139,0.12);
+  --primary-light: rgba(23,201,139,0.08);
+  --cta-bg: linear-gradient(135deg, #17C98B, #13aa76);
+  --cta-glow: rgba(23,201,139,0.25);
+}
+:root { --font-heading: 'Space Grotesk', -apple-system, sans-serif; --font-body: 'Inter', -apple-system, sans-serif; }
+
+  </style>
+</head>
+<body class="">
+  <div class="progress-bar" id="progress"></div>
+  
+  <nav class="nav">
+  <div class="nav-inner page-wrapper">
+    <a href="/" class="nav-brand">Mantra Staking</a>
+    <div class="nav-links" id="nav-links">
+      <a href="#what-mantra-staking-actually-means">What Mantra Staking</a>
+      <a href="#how-staking-on-mantra-works-step-by-step">How staking on</a>
+      <a href="#how-to-choose-a-validator-without-chasing-the-highest-apr">How to choose</a>
+      <div class="nav-more">
+        <button class="nav-more-btn" id="nav-more-btn">More <span class="nav-more-arrow">&#9662;</span></button>
+        <div class="nav-more-dropdown" id="nav-more-dropdown">
+          <a href="#reward-math-apr-and-what-your-yield-really-depends-on">Reward math, APR,</a>
+        <a href="#the-real-constraints-lockups-unbonding-and-slashing-risk">The real constraints:</a>
+        <a href="#mantra-staking-compared-with-holding-om-liquid">Mantra Staking compared</a>
+        <a href="#best-practices-for-managing-a-mantra-om-staking-position">Best practices for</a>
+        <a href="#faq">FAQ</a>
+        </div>
+      </div>
+      <a href="/mantra-staking/" class="cta-pill">Get Started</a>
+    </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<section class="hero noise-overlay">
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="dot"></span> Live DeFi Rates</div>
+    <h1>Mantra Staking Explained: How to Earn Rewards, Choose Validators, and Manage Risk</h1>
+    <p class="hero-subtitle">Mantra Staking is mostly a validator-selection and risk-management decision, not just a yield click. This guide breaks down how OM delegation works, how rewards are calculated, and what can delay exits or reduce returns.</p>
+    <div class="hero-cta"><a href="/mantra-staking/" class="cta-button">Explore Mantra Staking &rarr;</a></div>
+    
+  </div>
+</section>
+<main class="page-wrapper">
+<nav class="toc" aria-label="Table of Contents">
+  <h2 class="toc-title">Contents</h2>
+  <ol class="toc-list">
+    <li><a href="#what-mantra-staking-actually-means">What Mantra Staking actually means</a></li>
+    <li><a href="#how-staking-on-mantra-works-step-by-step">How staking on Mantra works step by step</a></li>
+    <li><a href="#how-to-choose-a-validator-without-chasing-the-highest-apr">How to choose a validator without chasing the highest APR</a></li>
+    <li><a href="#reward-math-apr-and-what-your-yield-really-depends-on">Reward math, APR, and what your yield really depends on</a></li>
+    <li><a href="#the-real-constraints-lockups-unbonding-and-slashing-risk">The real constraints: lockups, unbonding, and slashing risk</a></li>
+    <li><a href="#mantra-staking-compared-with-holding-om-liquid">Mantra Staking compared with holding OM liquid</a></li>
+    <li><a href="#best-practices-for-managing-a-mantra-om-staking-position">Best practices for managing a Mantra OM staking position</a></li>
+    <li><a href="#comparison">Comparison</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ol>
+</nav>
+
+<section class="content-section" id="what-mantra-staking-actually-means">
+  <h2>What Mantra Staking actually means</h2>
+  <p class="capsule">Mantra Staking means delegating OM token holdings to validators that participate in proof-of-stake consensus. Delegators keep ownership of their tokens, earn a share of network rewards after commission, and accept tradeoffs such as an unbonding period, validator risk, and variable APR.</p>
+  <p class="evidence">Delegated proof-of-stake networks distribute rewards to delegators through validators, with commissions and validator performance directly affecting net returns.</p>
+  <p><strong>Mantra Staking</strong> lets OM holders delegate tokens to validators instead of running validator infrastructure themselves. The practical goal is simple: earn on-chain rewards while helping support <strong>network security</strong> and governance participation on a proof-of-stake network.</p><p>The key mechanics are delegation, validator commission, reward distribution, and the unstaking process. If you are new to staking on Mantra, start with the network basics on the <a href="https://www.mantrachain.io/"><a href="https://www.mantrachain.io/" target="_blank" rel="noopener noreferrer">official MANTRA Chain website</a></a> and review how delegated proof-of-stake systems work in the <a href="https://docs.cosmos.network/"><a href="https://docs.cosmos.network/" target="_blank" rel="noopener noreferrer">Cosmos documentation on proof-of-stake and delegation</a></a>.</p><ul><li><strong>You delegate</strong> OM to a validator rather than transferring ownership.</li><li><strong>You earn</strong> staking rewards net of validator commission.</li><li><strong>You wait</strong> through the network's unbonding period if you decide to exit.</li><li><strong>You monitor</strong> validator uptime, commission changes, and any redelegation need.</li></ul><p></p>
+  <div class="subsection"><h3>Why OM staking is different from passive holding</h3><p>Holding OM without staking leaves rewards on the table but preserves full liquidity. Staking MANTRA tokens can improve long-term token accumulation, yet it introduces locked tokens, validator dependency, and delayed access during unbonding.</p></div>
+<div class="subsection"><h3>What drives returns in practice</h3><p>Net staking yield depends on annual percentage rate, validator commission, compounding rewards, and how often you claim or restake. A higher headline APR does not guarantee higher realized returns if the validator underperforms or charges materially more than peers.</p></div>
+
+</section>
+
+<section class="content-section" id="how-staking-on-mantra-works-step-by-step">
+  <h2>How staking on Mantra works step by step</h2>
+  <p class="capsule">Staking on Mantra follows a repeatable flow: fund a compatible wallet, choose a validator, delegate OM, track rewards, and decide whether to compound, redelegate, or unbond. The user decisions that matter most are wallet control, validator quality, and exit timing.</p>
+  <div class="steps">
+    <div class="step"><div class="step-content"><h4>Choose wallet access</h4><p>Use a wallet that supports OM staking, clear validator views, and secure transaction signing.</p></div></div>
+<div class="step"><div class="step-content"><h4>Compare validators</h4><p>Check commission, uptime, stake concentration, and whether the validator has a consistent operating record.</p></div></div>
+<div class="step"><div class="step-content"><h4>Delegate and confirm</h4><p>Submit the delegation transaction, verify the amount, and keep some tokens available for network fees if required.</p></div></div>
+<div class="step"><div class="step-content"><h4>Monitor rewards and risk</h4><p>Review reward distribution, validator status, and any reason to compound rewards or redelegate.</p></div></div>
+
+  </div>
+</section>
+
+<section class="content-section section--cards" id="how-to-choose-a-validator-without-chasing-the-highest-apr">
+  <h2>How to choose a validator without chasing the highest APR</h2>
+  <p class="capsule">The best validator is rarely the one advertising the highest apparent APR. Strong selection focuses on validator uptime, commission stability, reputation, decentralization impact, and whether the operator&#x27;s behavior supports reliable reward distribution over time.</p>
+  <div class="card-grid">
+    <div class="card"><h4>Low commission</h4><p>Can improve net rewards, but only if performance stays strong.</p><span class="highlight">Good, not sufficient</span></div>
+<div class="card"><h4>High uptime</h4><p>Supports reliable reward accrual and lowers avoidable operational drag.</p><span class="highlight">High priority</span></div>
+<div class="card"><h4>Balanced stake share</h4><p>Helps avoid adding more weight to already dominant validators.</p><span class="highlight">Useful for decentralization</span></div>
+
+  </div>
+</section>
+
+<div class="cta-inline">
+  <p>If you are narrowing down validators, compare commission, uptime, and staking constraints before you delegate.</p>
+  <a href="/mantra-staking/" class="cta-button">Compare Mantra Staking Options &rarr;</a>
+</div>
+
+<section class="content-section" id="reward-math-apr-and-what-your-yield-really-depends-on">
+  <h2>Reward math, APR, and what your yield really depends on</h2>
+  <p class="capsule">Staking rewards are not a fixed savings rate. Your realized yield depends on network APR, validator commission, compounding frequency, validator performance, and how long tokens remain staked without interruption.</p>
+  <p class="evidence">Realized staking yield can differ materially from headline APR because net returns depend on validator commission, compounding behavior, and validator performance.</p>
+  <p><strong>APR</strong> is a starting point, not a promise. In Mantra network staking, realized return changes with validator commission, reward timing, and whether you actively compound rewards back into the delegation.</p><p>A simple way to think about it is net reward flow: gross network rewards minus commission, minus the drag from downtime or missed claims, plus any lift from compounding rewards. Small differences become meaningful over long staking periods.</p><table><tr><th>Factor</th><th>Effect on yield</th><th>What to check</th></tr><tr><td>Network APR</td><td>Sets broad reward range</td><td>Current staking dashboard or explorer</td></tr><tr><td>Validator commission</td><td>Reduces delegator share</td><td>Current and historical fee policy</td></tr><tr><td>Uptime</td><td>Affects reward consistency</td><td>Recent performance record</td></tr><tr><td>Compounding</td><td>Can improve long-run token count</td><td>Claim and restake cadence</td></tr><tr><td>Unbonding periods</td><td>Creates opportunity cost</td><td>Liquidity needs before staking</td></tr></table>
+  <div class="subsection"><h3>Headline APR versus realized staking yield</h3><p>Annual percentage rate is useful for comparison, but it does not capture every friction. If reward claims are infrequent, if the validator changes commission, or if tokens sit idle during an unstaking process, your actual outcome can trail the headline number.</p></div>
+<div class="subsection"><h3>When compounding rewards is worth the effort</h3><p>Compounding matters most for long holding periods and larger balances. For smaller positions, fee costs and operational complexity can reduce the benefit, so an occasional manual restake may be more sensible than constant claiming.</p></div>
+
+</section>
+
+<section class="content-section" id="the-real-constraints-lockups-unbonding-and-slashing-risk">
+  <h2>The real constraints: lockups, unbonding, and slashing risk</h2>
+  <p class="capsule">The main cost of staking is reduced flexibility. Delegators must account for locked tokens, waiting periods during unbonding, possible slashing exposure tied to validator behavior, and the chance that market moves matter more than earned rewards.</p>
+  <p class="evidence">Liquidity constraints and token price moves can dominate staking outcomes, especially over short time frames or during sharp market volatility.</p>
+  <p><strong>Risk in staking MANTRA tokens</strong> is mostly about access and validator behavior. If you need liquidity quickly, the unbonding period can be more costly than a few extra points of staking yield.</p><ul><li><strong>Locked tokens:</strong> Delegated balances are not instantly liquid.</li><li><strong>Unbonding period:</strong> Exiting usually requires waiting before tokens become transferable again.</li><li><strong>Slashing:</strong> Some proof-of-stake systems penalize validator misconduct or downtime, affecting delegators.</li><li><strong>Market risk:</strong> Token price volatility can outweigh staking rewards over short periods.</li></ul><p>For a general explanation of validator penalties and staking design, see <a href="https://www.investopedia.com/terms/p/proof-stake-pos.asp">Investopedia's overview of proof of stake</a>.</p>
+  <div class="subsection"><h3>Why unbonding periods matter more than many users expect</h3><p>An unbonding period turns a liquid token position into a delayed exit. That can matter during fast market moves, portfolio rebalancing, or when you need funds elsewhere in DeFi.</p></div>
+<div class="subsection"><h3>How slashing changes validator due diligence</h3><p>Slashing risk means validator screening is not optional. Even if the probability is low, exposure to poor operations changes the expected return profile because losses can offset months of reward accumulation.</p></div>
+
+</section>
+
+<section class="content-section section--cards" id="mantra-staking-compared-with-holding-om-liquid">
+  <h2>Mantra Staking compared with holding OM liquid</h2>
+  <p class="capsule">The core decision is not whether staking exists, but whether staking beats the value of remaining liquid. Staking can raise token balance over time, while liquid holding preserves flexibility for selling, moving capital, or using OM elsewhere.</p>
+  <div class="card-grid">
+    <div class="card"><h4>Stake OM</h4><p>Potential rewards, governance alignment, and participation in proof-of-stake security.</p><span class="highlight">Better for long-term holders</span></div>
+<div class="card"><h4>Hold OM liquid</h4><p>Immediate flexibility for transfers, sales, or other uses without unbonding delays.</p><span class="highlight">Better for short-term agility</span></div>
+
+  </div>
+</section>
+
+<section class="content-section" id="best-practices-for-managing-a-mantra-om-staking-position">
+  <h2>Best practices for managing a Mantra OM staking position</h2>
+  <p class="capsule">Good staking results come from steady maintenance, not one-time setup. Track validator changes, review reward patterns, keep wallet security tight, and plan exits before you need them.</p>
+  <div class="steps">
+    <div class="step"><div class="step-content"><h4>Set a validator review schedule</h4><p>Check status, commission, and operating quality at regular intervals rather than only when something goes wrong.</p></div></div>
+<div class="step"><div class="step-content"><h4>Keep a liquidity buffer</h4><p>Do not delegate every token if you may need fast access during volatility or portfolio changes.</p></div></div>
+<div class="step"><div class="step-content"><h4>Document your exit plan</h4><p>Know when you would unbond, redelegate, or stop compounding before the decision becomes urgent.</p></div></div>
+
+  </div>
+</section>
+
+<section class="content-section comparison-section" id="comparison">
+  <h2>Mantra Staking options at a glance</h2>
+  <p class="capsule">For most users, a split approach is the most practical winner because it preserves some liquidity while still earning on a core OM position.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Option</th><th>Potential upside</th><th>Main tradeoff</th><th>Best fit</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Delegate OM to a validator</td><td>Earn staking rewards and support network security</td><td>Unbonding period, validator risk, variable APR</td><td>Long-term holders</td></tr>
+<tr><td>Hold OM liquid</td><td>Immediate flexibility and no staking lockup</td><td>No on-chain reward distribution</td><td>Active traders or short-term users</td></tr>
+<tr><td>Split between staked and liquid OM</td><td>Balances yield with liquidity</td><td>Requires more active allocation management</td><td>Users with mixed time horizons</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="content-section faq-section" id="faq">
+  <h2>Frequently asked questions about Mantra Staking</h2>
+  <div class="faq-list">
+    <details><summary>How does Mantra Staking work?</summary><div><p>Mantra Staking works by delegating OM tokens to a validator that helps secure the network and produce blocks. In return, delegators earn a share of staking rewards after validator commission, while accepting risks such as lockup periods, validator underperformance, and possible slashing depending on network rules.</p></div></details>
+<details><summary>Do you lose custody of OM when you stake it?</summary><div><p>Not in the usual delegated staking model. You generally retain ownership of the OM token while assigning staking power to a validator, but the tokens can become locked for network purposes until you complete the unstaking process.</p></div></details>
+<details><summary>What should I check before choosing a validator?</summary><div><p>Start with validator uptime, commission, stake concentration, and operating history. A network explorer such as &lt;a href=&quot;https://www.mintscan.io/&quot;&gt;Mintscan validator data&lt;/a&gt; can help you compare active validators and avoid choosing solely by advertised yield.</p></div></details>
+<details><summary>Can Mantra staking rewards change over time?</summary><div><p>Yes. Staking rewards can shift with network conditions, validator commission, and your own compounding behavior. That is why annual percentage rate should be treated as a moving estimate rather than a fixed return promise.</p></div></details>
+<details><summary>What is the main downside of staking on Mantra?</summary><div><p>The biggest downside is reduced liquidity. If OM is locked during staking or waiting through an unbonding period, you may not be able to react quickly to market changes or move funds into another strategy.</p></div></details>
+<details><summary>Where can I learn the proof-of-stake model behind OM staking?</summary><div><p>A strong starting point is the &lt;a href=&quot;https://docs.cosmos.network/&quot;&gt;Cosmos proof-of-stake and delegation documentation&lt;/a&gt;, which explains how validators, delegators, and reward mechanics typically work on networks built around similar staking concepts.</p></div></details>
+
+  </div>
+</section>
+
+<div class="disclaimer-block">
+  <p><strong>Disclaimer:</strong> This content is for informational purposes only and does not constitute investment, legal, or tax advice. Staking rewards, lockups, validator performance, and token prices can change, and you should review official network materials before making any decision.</p>
+</div>
+
+<section class="cta-section" id="cta">
+  <div class="cta-inner">
+    <h2>Ready to review your staking choices?</h2>
+    <p>Use a structured approach to compare validator quality, liquidity needs, and reward expectations before delegating OM.</p>
+    <a href="/mantra-staking/" class="cta-button">Get Started with Mantra Staking &rarr;</a>
+  </div>
+</section>
+
+</main>
+<footer class="footer">
+  <div class="page-wrapper">
+    <div class="footer-inner">
+      <p class="footer-copy">&copy; Mantra Staking</p>
+      
+      <p class="footer-updated">Last updated: 2026-03-25</p>
+    </div>
+  </div>
+</footer>
+
+  <button class="back-top" id="btt" aria-label="Back to top">&uarr;</button>
+  <script>
+    /* Progress bar */
+    window.addEventListener('scroll',function(){var s=document.documentElement,t=s.scrollHeight-s.clientHeight;document.getElementById('progress').style.width=t?((s.scrollTop/t)*100)+'%':'0%'});
+    /* Back to top */
+    var btt=document.getElementById('btt');window.addEventListener('scroll',function(){btt.classList.toggle('visible',window.scrollY>400)});btt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});
+    
+/* Nav toggle */
+var nt=document.getElementById('nav-toggle'),nl=document.getElementById('nav-links');
+if(nt&&nl){nt.addEventListener('click',function(){nl.classList.toggle('open')})}
+/* Nav More dropdown */
+var nm=document.getElementById('nav-more-btn'),nd=nm&&nm.closest('.nav-more');
+if(nm&&nd){nm.addEventListener('click',function(e){e.stopPropagation();nd.classList.toggle('open')});document.addEventListener('click',function(){nd.classList.remove('open')})}
+/* Nav auto-hide on scroll */
+var nav=document.querySelector('.nav--auto-hide');
+if(nav){var ls=0;window.addEventListener('scroll',function(){var c=window.scrollY;if(c>ls&&c>80){nav.classList.add('nav--hidden')}else{nav.classList.remove('nav--hidden')}ls=c})}
+/* Nav transparent until scroll */
+var tn=document.querySelector('.nav--transparent');
+if(tn){window.addEventListener('scroll',function(){tn.classList.toggle('nav--scrolled',window.scrollY>60)})}
+/* Sticky CTA show on scroll */
+var sc=document.querySelector('.cta-sticky');
+if(sc){window.addEventListener('scroll',function(){sc.classList.toggle('visible',window.scrollY>800)})}
+/* Scroll fade-in animations */
+var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target)}})},{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.content-section,.card,.step,.faq-section,.cta-section,.trust-section,.comparison-section,.pros-cons-section,.toc,.pricing-section,.testimonials-section,.stats-bar').forEach(function(el){el.classList.add('fade-in');io.observe(el)});
+/* CoinGecko price ticker */
+var ticker=document.getElementById('price-ticker');
+if(ticker){var coins=['bitcoin','ethereum','matic-network','solana','binancecoin'];function updTicker(){fetch('https://api.coingecko.com/api/v3/simple/price?ids='+coins.join(',')+'&vs_currencies=usd&include_24hr_change=true').then(function(r){return r.json()}).then(function(d){var h='';coins.forEach(function(c){if(d[c]){var p=d[c].usd,ch=d[c].usd_24h_change||0,cl=ch>=0?'ticker-up':'ticker-down',nm=c.split('-')[0].toUpperCase();h+='<span class="ticker-item"><b>'+nm+'</b> $'+p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' <span class="'+cl+'">'+(ch>=0?'+':'')+ch.toFixed(1)+'%</span></span>'}});document.getElementById('ticker-items').innerHTML=h}).catch(function(){})}updTicker();setInterval(updTicker,60000)}
+
+  </script>
+</body>
+</html>

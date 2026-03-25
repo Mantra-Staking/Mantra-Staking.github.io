@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /mantra-staking/
+Sitemap: https://mantra-staking.github.io/sitemap.xml
